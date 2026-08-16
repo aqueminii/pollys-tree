@@ -1,1 +1,91 @@
+backend:
+  name: git-gateway
+  branch: main
 
+media_folder: "static/assets"
+public_folder: "/assets"
+
+collections:
+  # -------------------------------------------------------------
+  # 1. CANONICAL NARRATIVE CHAPTERS
+  # -------------------------------------------------------------
+  - name: "chapters"
+    label: "Narrative Chapters"
+    folder: "content/chapters"
+    create: false
+    slug: "{{slug}}"
+    fields:
+      - { label: "Chapter Number", name: "chapter_num", widget: "number" }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Time Span", name: "time_span", widget: "string" }
+      - { label: "Geographic Focus", name: "location", widget: "string" }
+      - { label: "Core Narrative", name: "body", widget: "markdown" }
+      - { label: "Linked Evidence IDs", name: "linked_evidence", widget: "list" }
+
+  # -------------------------------------------------------------
+  # 2. MASTER EVIDENCE VAULT
+  # -------------------------------------------------------------
+  - name: "evidence"
+    label: "Evidence Vault"
+    folder: "content/evidence"
+    create: true
+    slug: "{{evidence_id}}"
+    fields:
+      - { label: "Evidence ID", name: "evidence_id", widget: "string", hint: "e.g. EV-024" }
+      - { label: "Date (ISO)", name: "date_iso", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: "Date Display", name: "date_display", widget: "string" }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Provenance", name: "provenance", widget: "select", options: ["Marilyn Harris Suitcase", "UVA Law Library (Duke Papers)", "Hanover County Courthouse", "Albemarle County Records", "Federal Census Archive"] }
+      - { label: "Thread ID", name: "thread_id", widget: "string", required: false }
+      - { label: "People Tagged", name: "people_tagged", widget: "list" }
+      - { label: "Document Images", name: "images", widget: "list", field: { label: "Scan Image", name: "image", widget: "image" } }
+      - { label: "OCR / Verified Transcript", name: "body", widget: "markdown" }
+
+  # -------------------------------------------------------------
+  # 3. CHARACTER & INSTITUTIONAL DOSSIERS
+  # -------------------------------------------------------------
+  - name: "dossiers"
+    label: "Character Dossiers"
+    folder: "content/dossiers"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Full Name", name: "name", widget: "string" }
+      - { label: "Lifespan", name: "lifespan", widget: "string" }
+      - { label: "Historical Role", name: "role", widget: "string" }
+      - { label: "Portrait / Primary Scan", name: "portrait", widget: "image", required: false }
+      - { label: "Associated Evidence IDs", name: "evidence_ids", widget: "list" }
+      - { label: "Biographical Dossier", name: "body", widget: "markdown" }
+
+  # -------------------------------------------------------------
+  # 4. WHERE THE TRAIL LEADS NEXT (OPEN HYPOTHESES)
+  # -------------------------------------------------------------
+  - name: "trails"
+    label: "Where the Trail Leads Next"
+    folder: "content/trails"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Trail ID", name: "trail_id", widget: "string", hint: "e.g. TRAIL-001" }
+      - { label: "Hypothesis Title", name: "title", widget: "string" }
+      - { label: "Target Era", name: "era", widget: "string" }
+      - { label: "Status", name: "status", widget: "select", options: ["Active Hypothesis", "Archival Search in Progress", "Resolved with Proof"] }
+      - { label: "The Question & What We Know", name: "body", widget: "markdown" }
+      - { label: "Known Clues & Artifacts", name: "clues", widget: "list", required: false }
+      - { label: "Accept Community Leads", name: "allow_submissions", widget: "boolean", default: true }
+
+  # -------------------------------------------------------------
+  # 5. UPDATES & DISPATCH (CHANGELOG & NOTIFICATIONS)
+  # -------------------------------------------------------------
+  - name: "updates"
+    label: "Archive Updates & News"
+    folder: "content/updates"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Headline", name: "title", widget: "string" }
+      - { label: "Homepage Badge Text", name: "badge_summary", widget: "string", hint: "Short summary shown on the top homepage alert" }
+      - { label: "Linked Evidence / Chapter URL", name: "linked_url", widget: "string", required: false }
+      - { label: "Broadcast Alert to Subscribers", name: "broadcast_alert", widget: "boolean", default: false }
+      - { label: "Update Body", name: "body", widget: "markdown" }
