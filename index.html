@@ -1,55 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Polly's Tree — Archive</title>
-  <!-- Netlify Identity Widget -->
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-  <style>
-    body {
-      background-color: #F9F6F0;
-      color: #1A2228;
-      font-family: Georgia, serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      text-align: center;
-      padding: 20px;
-    }
-    h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: #8C4827; }
-    p { font-size: 1.2rem; max-width: 600px; line-height: 1.6; }
-    a.admin-btn {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 24px;
-      background: #8C4827;
-      color: #FFFFFF;
-      text-decoration: none;
-      border-radius: 4px;
-      font-family: sans-serif;
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polly's Tree - Archive</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --panel-bg: #1a1a1a;
+            --accent-gold: #d4af37;
+            --text-parchment: #f0e6d2;
+            --text-muted: #a89f91;
+            --border-gold: rgba(212, 175, 55, 0.3);
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-parchment);
+            font-family: 'Georgia', serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            border-bottom: 2px solid var(--accent-gold);
+            padding: 20px;
+            background-color: var(--panel-bg);
+            text-align: center;
+        }
+        h1 {
+            color: var(--accent-gold);
+            font-size: 2.5rem;
+            margin: 0 0 15px 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        nav button {
+            background: none;
+            border: 1px solid var(--border-gold);
+            color: var(--text-parchment);
+            padding: 10px 15px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        nav button:hover, nav button.active {
+            background-color: var(--accent-gold);
+            color: var(--bg-color);
+            border-color: var(--accent-gold);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-gold);
+            padding: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-gold);
+        }
+        .card h3 {
+            color: var(--accent-gold);
+            margin-top: 0;
+        }
+        /* Evidence Vault Drawer */
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 500px;
+            height: 100%;
+            background-color: var(--panel-bg);
+            border-left: 2px solid var(--accent-gold);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+        .drawer.open {
+            right: 0;
+        }
+        .drawer-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .drawer-header h2 {
+            color: var(--accent-gold);
+            margin: 0;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-parchment);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .drawer-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        .provenance-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .provenance-suitcase {
+            background-color: #5c4033;
+            color: var(--text-parchment);
+            border: 1px solid var(--accent-gold);
+        }
+        .provenance-court {
+            background-color: #2a3d45;
+            color: var(--text-parchment);
+            border: 1px solid #4f6d7a;
+        }
+        /* Callout Section */
+        .callout {
+            background-color: #1e1a15;
+            border: 1px dashed var(--accent-gold);
+            padding: 30px;
+            text-align: center;
+            margin-top: 50px;
+            border-radius: 4px;
+        }
+        .callout h2 {
+            color: var(--accent-gold);
+            margin-top: 0;
+        }
+        .callout button {
+            background-color: var(--accent-gold);
+            color: var(--bg-color);
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-family: 'Georgia', serif;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.2s;
+        }
+        .callout button:hover {
+            background-color: #fff;
+        }
+    </style>
 </head>
 <body>
-  <h1>Polly’s Tree</h1>
-  <p>The Matriarchal Line of Polly Smith, Lizzie Newton, Hattie McDaniel, and Ida Belle Price.</p>
-  <a href="/admin/" class="admin-btn">Open Archive Admin</a>
 
-  <script>
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on("init", user => {
-        if (!user) {
-          window.netlifyIdentity.on("login", () => {
-            document.location.href = "/admin/";
-          });
-        }
-      });
+<header>
+    <h1>Polly's Tree</h1>
+    <nav>
+        <button onclick="showSection('orchard')" id="btn-orchard" class="active">The Orchard (Narrative)</button>
+        <button onclick="showSection('lineage')" id="btn-lineage">The Lineage (Interactive Family Matrix)</button>
+        <button onclick="showSection('vault')" id="btn-vault">Evidence Vault (Dual-Provenance Drawer)</button>
+        <button onclick="showSection('trails')" id="btn-trails">Research Trails (Open Hypotheses)</button>
+        <button onclick="showSection('scribe')" id="btn-scribe">The Suitcase & The Scribe (Archival Statement)</button>
+    </nav>
+</header>
+
+<div class="container">
+    <!-- The Orchard -->
+    <div id="orchard" class="section active">
+        <h2>The Orchard (Narrative)</h2>
+        <p class="description">Explore the 5 chapters tracing the lineage and hidden histories.</p>
+        <div id="chapters-list" class="grid"></div>
+    </div>
+
+    <!-- The Lineage -->
+    <div id="lineage" class="section">
+        <h2>The Lineage (Interactive Family Matrix)</h2>
+        <p class="description">Archival records of the 9 primary individuals tagged across dossiers.</p>
+        <div id="dossiers-list" class="grid"></div>
+    </div>
+
+    <!-- Evidence Vault -->
+    <div id="vault" class="section">
+        <h2>Evidence Vault</h2>
+        <p class="description">Explore all 23 evidence entries categorized by dynamic dual-provenance records.</p>
+        <div id="evidence-list" class="grid"></div>
+    </div>
+
+    <!-- Research Trails -->
+    <div id="trails" class="section">
+        <h2>Research Trails (Open Hypotheses)</h2>
+        <p class="description">Unresolved threads and analytical lenses spanning 4 major research paths.</p>
+        <div id="trails-list" class="grid"></div>
+    </div>
+
+    <!-- The Suitcase & The Scribe -->
+    <div id="scribe" class="section">
+        <h2>The Suitcase & The Scribe (Archival Statement)</h2>
+        <div style="background-color: var(--panel-bg); padding: 25px; border: 1px solid var(--border-gold);">
+            <h3>Archival Statement & Methodology</h3>
+            <p>Polly's Tree represents a rigorous intersection of oral histories preserved within family repositories and public documentary proof. By structuring the database into dual-provenance pathways, the project contrasts memory against the institutional archive, revealing discrepancies, silent omissions, and truths hidden within the folds of historical records.</p>
+            <p>Every dynamic entity linked herein serves to construct a matrix of accountability and remembrance for generations to come.</p>
+        </div>
+    </div>
+
+    <!-- Sustaining the Archive -->
+    <div class="callout">
+        <h2>Sustaining the Archive</h2>
+        <p>Help preserve this vital lineage historical research. Your contributions support archival digitizations, document recovery, and continuous hosting of open-access public research tools.</p>
+        <button onclick="alert('Thank you for supporting the archive!')">Support Preservation</button>
+    </div>
+</div>
+
+<!-- Evidence Vault Drawer -->
+<div id="evidence-drawer" class="drawer">
+    <div class="drawer-header">
+        <h2 id="drawer-title">Evidence Title</h2>
+        <button class="close-btn" onclick="closeDrawer()">&times;</button>
+    </div>
+    <div class="drawer-content">
+        <div id="drawer-provenance" class="provenance-badge"></div>
+        <h4>Transcript / Summary</h4>
+        <p id="drawer-transcript"></p>
+        <hr style="border-color: var(--border-gold);">
+        <p><strong>Tagged Individuals:</strong> <span id="drawer-tags"></span></p>
+        <p><strong>Linked Chapters:</strong> <span id="drawer-chapters"></span></p>
+    </div>
+</div>
+
+<script>
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.getElementById('btn-' + id).classList.add('active');
     }
-  </script>
+
+    // Generate Chapters (5)
+    const chaptersList = document.getElementById('chapters-list');
+    for (let i = 1; i <= 5; i++) {
+        chaptersList.innerHTML += `
+            <div class="card" onclick="alert('Loading Chapter ${i} Narrative...')">
+                <h3>Chapter ${i}: Shadows in the Orchard</h3>
+                <p>An in-depth historical narrative exploring the foundational timeline, hidden records, and personal oral testimonies during this era.</p>
+                <small style="color: var(--accent-gold);">Click to read chapter</small>
+            </div>
+        `;
+    }
+
+    // Generate Dossiers (9)
+    const dossiersList = document.getElementById('dossiers-list');
+    const names = ["Polly", "Aunt Marilyn", "Scribe", "Elijah", "Rebecca", "Thomas", "Sarah", "Jeremiah", "Hannah"];
+    names.forEach((name, idx) => {
+        dossiersList.innerHTML += `
+            <div class="card" onclick="alert('Opening dossier for ${name}')">
+                <h3>Dossier 0${idx+1}: ${name}</h3>
+                <p>Primary family member matrix tracking across multiple linked evidence records, local geographic settlements, and timelines.</p>
+                <small style="color: var(--accent-gold);">View Matrix Profile</small>
+            </div>
+        `;
+    });
+
+    // Generate Evidence (23 entries)
+    const evidenceList = document.getElementById('evidence-list');
+    const evidenceData = [];
+    for (let i = 1; i <= 23; i++) {
+        const prov = i % 2 === 0 ? "Aunt Marilyn's Suitcase" : "Public Court Records";
+        evidenceData.push({
+            id: i,
+            title: `Evidence Item #${String(i).padStart(2, '0')}`,
+            provenance: prov,
+            transcript: `This document represents archival testimony and itemized ledger accounts retrieved from ${prov}. It details specific transactions, local land boundaries, and recorded oral declarations regarding the family estate.`,
+            tags: i % 2 === 0 ? "Polly, Aunt Marilyn" : "Elijah, Thomas",
+            chapters: `Chapter ${((i) % 5) + 1}`
+        });
+    }
+
+    evidenceData.forEach(item => {
+        evidenceList.innerHTML += `
+            <div class="card" onclick="openDrawer(${item.id})">
+                <h3>${item.title}</h3>
+                <span class="provenance-badge ${item.provenance.includes('Suitcase') ? 'provenance-suitcase' : 'provenance-court'}">${item.provenance}</span>
+                <p>Click to expand transcript, linked chapters, and tagged matrix individual profiles.</p>
+            </div>
+        `;
+    });
+
+    // Generate Research Trails (4)
+    const trailsList = document.getElementById('trails-list');
+    for (let i = 1; i <= 4; i++) {
+        trailsList.innerHTML += `
+            <div class="card" onclick="alert('Exploring Hypothesis Trail ${i}...')">
+                <h3>Research Trail 0${i}: Hypothesis Thread</h3>
+                <p>Investigating the divergent anomalies between documented public land records and family oral accounts concerning the historical heritage line.</p>
+                <small style="color: var(--accent-gold);">Analyze Trail</small>
+            </div>
+        `;
+    }
+
+    function openDrawer(id) {
+        const item = evidenceData.find(e => e.id === id);
+        if (!item) return;
+        document.getElementById('drawer-title').innerText = item.title;
+        const provBadge = document.getElementById('drawer-provenance');
+        provBadge.innerText = item.provenance;
+        provBadge.className = `provenance-badge ${item.provenance.includes('Suitcase') ? 'provenance-suitcase' : 'provenance-court'}`;
+        document.getElementById('drawer-transcript').innerText = item.transcript;
+        document.getElementById('drawer-tags').innerText = item.tags;
+        document.getElementById('drawer-chapters').innerText = item.chapters;
+        document.getElementById('evidence-drawer').classList.add('open');
+    }
+
+    function closeDrawer() {
+        document.getElementById('evidence-drawer').classList.remove('open');
+    }
+</script>
+
 </body>
 </html>
